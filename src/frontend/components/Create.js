@@ -2,7 +2,24 @@ import { useState } from 'react'
 import { ethers } from "ethers"
 import { Row, Form, Button } from 'react-bootstrap'
 import { create as ipfsHttpClient } from 'ipfs-http-client'
-const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
+import { Buffer } from 'buffer'
+// import { create } from 'ipfs-http-client'
+
+// const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0')
+// connect to ipfs daemon API server
+// const ipfs = create('http://localhost:5001') // (the default in Node.js)
+const { REACT_APP_INFURA_ID, REACT_APP_INFURA_SECRET_KEY } = process.env;
+
+const auth =
+    'Basic ' + Buffer.from(REACT_APP_INFURA_ID + ':' + REACT_APP_INFURA_SECRET_KEY).toString('base64');
+const client = ipfsHttpClient({
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https',
+    headers: {
+        authorization: auth,
+    },
+});
 
 const Create = ({ marketplace, nft }) => {
   const [image, setImage] = useState('')
