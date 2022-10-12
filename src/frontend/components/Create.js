@@ -13,7 +13,7 @@ const { REACT_APP_INFURA_ID, REACT_APP_INFURA_SECRET_KEY } = process.env;
 const auth =
     'Basic ' + Buffer.from(REACT_APP_INFURA_ID + ':' + REACT_APP_INFURA_SECRET_KEY).toString('base64');
 const client = ipfsHttpClient({
-    host: 'ipfs.infura.io',
+    host: 'infura-ipfs.io',
     port: 5001,
     protocol: 'https',
     headers: {
@@ -23,33 +23,45 @@ const client = ipfsHttpClient({
 
 const Create = ({ marketplace, nft }) => {
   const [image, setImage] = useState('')
+  // add in variable 'isVideo'
+  const [isVideo, setIsVideo] = useState('')
   const [price, setPrice] = useState(null)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const uploadToIPFS = async (event) => {
     event.preventDefault()
     const file = event.target.files[0]
+    console.log(file)
     if (typeof file !== 'undefined') {
       try {
         const result = await client.add(file)
         console.log(result)
-        setImage(`https://ipfs.infura.io/ipfs/${result.path}`)
+        // setImage(`https://ipfs.infura.io/ipfs/${result.path}`)
+        setImage(`https://infura-ipfs.io/ipfs/${result.path}`)
       } catch (error){
         console.log("ipfs image upload error: ", error)
       }
     }
+    // after we do setImage, add conditional, so if isVideo is set to false, then show the image, if isVideo is set to true, then show video
+    // if (!image) {
+        // setIsVideo = true;
+    // } else {
+        // setIsVideo = false;
+    // }
   }
   const createNFT = async () => {
-    if (!image || !price || !name || !description) return
+    if (!image || !isVideo || !price || !name || !description) return
     try{
-      const result = await client.add(JSON.stringify({image, price, name, description}))
+      const result = await client.add(JSON.stringify({image, isVideo, price, name, description}))
       mintThenList(result)
     } catch(error) {
       console.log("ipfs uri upload error: ", error)
     }
   }
   const mintThenList = async (result) => {
-    const uri = `https://ipfs.infura.io/ipfs/${result.path}`
+    // const uri = `https://ipfs.infura.io/ipfs/${result.path}`
+    const uri = `https://infura-ipfs.io/ipfs/${result.path}`
+    console.log(uri)
     // mint nft 
     await(await nft.mint(uri)).wait()
     // get tokenId of new nft 

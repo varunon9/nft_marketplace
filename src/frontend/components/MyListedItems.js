@@ -10,7 +10,9 @@ function renderSoldItems(items) {
         {items.map((item, idx) => (
           <Col key={idx} className="overflow-hidden">
             <Card>
-              <Card.Img variant="top" src={item.image} />
+            <video controls>
+              <source src={item.image} />
+            </video>
               <Card.Footer>
                 For {ethers.utils.formatEther(item.totalPrice)} ETH - Recieved {ethers.utils.formatEther(item.price)} ETH
               </Card.Footer>
@@ -76,7 +78,9 @@ export default function MyListedItems({ marketplace, nft, account }) {
             {listedItems.map((item, idx) => (
               <Col key={idx} className="overflow-hidden">
                 <Card>
-                  <Card.Img variant="top" src={item.image} />
+                  <video controls>
+                    <source src={item.image} />
+                   </video>
                   <Card.Footer>{ethers.utils.formatEther(item.totalPrice)} ETH</Card.Footer>
                 </Card>
               </Col>
