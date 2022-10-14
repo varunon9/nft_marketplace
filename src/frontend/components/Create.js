@@ -22,40 +22,35 @@ const client = ipfsHttpClient({
 });
 
 const Create = ({ marketplace, nft }) => {
-  const [image, setImage] = useState('')
-  // add in variable 'isVideo'
-  const [isVideo, setIsVideo] = useState('')
+  const [assetUrl, setAssetUrl] = useState('');
+  const [assetType, setAssetType] = useState('');
   const [price, setPrice] = useState(null)
   const [name, setName] = useState('')
   const [description, setDescription] = useState('')
   const uploadToIPFS = async (event) => {
     event.preventDefault()
     const file = event.target.files[0]
-    console.log(file)
+    console.log('File: ', file);
     if (typeof file !== 'undefined') {
+      setAssetType(file.type);
       try {
         const result = await client.add(file)
-        console.log(result)
-        // setImage(`https://ipfs.infura.io/ipfs/${result.path}`)
-        setImage(`https://infura-ipfs.io/ipfs/${result.path}`)
+        console.log('Infura Upload Result:', result)
+        setAssetUrl(`https://infura-ipfs.io/ipfs/${result.path}`)
       } catch (error){
-        console.log("ipfs image upload error: ", error)
+        console.log("ipfs file upload error: ", error)
       }
     }
-    // after we do setImage, add conditional, so if isVideo is set to false, then show the image, if isVideo is set to true, then show video
-    // if (!image) {
-        // setIsVideo = true;
-    // } else {
-        // setIsVideo = false;
-    // }
   }
   const createNFT = async () => {
-    if (!image || !isVideo || !price || !name || !description) return
-    try{
-      const result = await client.add(JSON.stringify({image, isVideo, price, name, description}))
-      mintThenList(result)
-    } catch(error) {
-      console.log("ipfs uri upload error: ", error)
+    if (assetUrl && assetType && name && description && price) {
+      try{
+        const result = await client.add(JSON.stringify({assetUrl, assetType, price, name, description}))
+        console.log('NFT to be created result:', result);
+        mintThenList(result)
+      } catch(error) {
+        console.log("ipfs uri upload error: ", error)
+      }
     }
   }
   const mintThenList = async (result) => {
