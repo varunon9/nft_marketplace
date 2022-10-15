@@ -74,16 +74,17 @@ export default function MyListedItems({ marketplace, nft, account }) {
     // changing https://ipfs.io/ipfs/QmZ8SXYrmtovrmEZHZZdvjN17etmK8uTsXK1v3cNE6E96t
     // to https://ipfs.moralis.io:2053/ipfs/QmZ8SXYrmtovrmEZHZZdvjN17etmK8uTsXK1v3cNE6E96t
     // since former is throwing frequent 504
-    //item.assetUrl.replace('https://infura-ipfs.io/', 'https://ipfs.moralis.io:2053/');
+    const assetUrl = item.assetUrl.replace('https://infura-ipfs.io/', 'https://ipfs.moralis.io:2053/');
+    //const assetUrl = item.assetUrl.replace('https://infura-ipfs.io/', 'https://ipfs.io/');
     return (
       <div>
         {item.assetType.indexOf('image/') === 0 ? 
-          <div><img src={item.assetUrl} alt="" /></div> 
+          <div><img src={assetUrl} alt="" /></div> 
         : null}
         {item.assetType.indexOf('video/') === 0 ? 
           <div>
-            <video controls autoplay width="260">
-              <source src={item.assetUrl} type={item.assetType} />
+            <video controls autoPlay width="260">
+              <source src={assetUrl} type={item.assetType} />
               Your browser does not support the video tag.
             </video>
           </div> 
