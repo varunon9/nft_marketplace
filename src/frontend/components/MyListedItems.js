@@ -43,6 +43,7 @@ export default function MyListedItems({ marketplace, nft, account }) {
         const metadata = await response.json()
         // get total price of item (item price + fee)
         const totalPrice = await marketplace.getTotalPrice(i.itemId)
+        console.log(metadata);
         // define listed item object
         let item = {
           totalPrice,
@@ -50,7 +51,8 @@ export default function MyListedItems({ marketplace, nft, account }) {
           itemId: i.itemId,
           name: metadata.name,
           description: metadata.description,
-          image: metadata.image
+          assetUrl: metadata.assetUrl,
+          assetType: metadata.assetType
         }
         listedItems.push(item)
         // Add listed item to sold items array if sold
@@ -64,6 +66,32 @@ export default function MyListedItems({ marketplace, nft, account }) {
   useEffect(() => {
     loadListedItems()
   }, [])
+
+  const renderAsset = (item) => {
+    if (!item || !item.assetType) {
+      return null;
+    }
+    // changing https://ipfs.io/ipfs/QmZ8SXYrmtovrmEZHZZdvjN17etmK8uTsXK1v3cNE6E96t
+    // to https://ipfs.moralis.io:2053/ipfs/QmZ8SXYrmtovrmEZHZZdvjN17etmK8uTsXK1v3cNE6E96t
+    // since former is throwing frequent 504
+    //item.assetUrl.replace('https://infura-ipfs.io/', 'https://ipfs.moralis.io:2053/');
+    return (
+      <div>
+        {item.assetType.indexOf('image/') === 0 ? 
+          <div><img src={item.assetUrl} alt="" /></div> 
+        : null}
+        {item.assetType.indexOf('video/') === 0 ? 
+          <div>
+            <video controls autoplay width="260">
+              <source src={item.assetUrl} type={item.assetType} />
+              Your browser does not support the video tag.
+            </video>
+          </div> 
+        : null}
+      </div>
+    )
+  }
+
   if (loading) return (
     <main style={{ padding: "1rem 0" }}>
       <h2>Loading...</h2>
@@ -78,9 +106,13 @@ export default function MyListedItems({ marketplace, nft, account }) {
             {listedItems.map((item, idx) => (
               <Col key={idx} className="overflow-hidden">
                 <Card>
-                  <video controls>
-                    <source src={item.image} />
-                   </video>
+                  <Card.Body>
+                    <Card.Title>{item.name}</Card.Title>
+                    <Card.Text>
+                      {item.description}
+                    </Card.Text>
+                    {renderAsset(item)}
+                  </Card.Body>
                   <Card.Footer>{ethers.utils.formatEther(item.totalPrice)} ETH</Card.Footer>
                 </Card>
               </Col>
